@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Valley of the Tweets</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .mainContent {
+                width: 40%;
+                min-width: 650px;
+            }
+
+            .mainContainer {
+                display: flex;
+                justify-content: center;
+            }
+           
+            .mainContainer > div {
+                width: 100%;
+            }
+
+            .mainTopBar {
+                padding: 5px 20px;
+                border: 1px solid #eee;
+            }
+
+            .mainTopBar .name {
+                font-size: 1.3em;
+                font-weight: bold;
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .mainTopBar .tweetCount {
+                font-size: 0.85em;
+                color: #999;
+            }
+
+            .mainImg img {
+                width: 100%;
+            }
+
+            .mainImg {
+                max-height: 250px;
+                overflow: hidden;
+            }
+
+            .mainBio {
+                position: relative;
+                border: 1px solid #eee;
+            }
+
+            .mainBio .bioImg {
+                width: 133px;
+                height: 133px;
+                border-radius: 50%;
+                border: 5px solid white;
+                position: relative;
+                top: -66px;
+                left: 20px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            .mainBio .bioImg:hover {
+                filter: brightness(0.9);
+            }
+
+            .mainBio .name {
+                display: block;
+                font-size: 1.3em;
+                font-weight: bold;
+                margin: -50px 0 5px 20px;
+            }
+
+            .mainBio .tag {
+                display: block;
+                font-size: 0.9em;
+                color: #888;
+                margin: 0 0 10px 20px;
+            }
+
+            .mainBio .bio {
+                display: block;
+                margin: 0 0 10px 20px;
+            }
+
+            .bioIcons {
+                padding: 0 0 10px 20px;
+                color: #777;
+            }
+
+            .bioIcons .icon {
+                padding-right: 10px;
+            }
+
+            alink {
+                color: rgb(29, 155, 240);
+                cursor: pointer;
+            }
+
+            alink:hover {
+                text-decoration: underline;
+            }
+
+            bold {
+                font-weight: bold;
+                color: black;
+            }
+
+            .tweet {
+                padding: 9px 20px 20px 20px;
+                position: relative;
+                border: 1px solid #eee;
+                border-top: none;
+                cursor: pointer;
+            }
+
+            .tweetImg {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                position: absolute;
+                top: 30px;
+                left: 15px;
+            }
+
+            .tweetInfo {
+                color: #777;
+            }
+
+            .tweetIcons, .tweetContent, .tweetTop {
+                margin-left: 68px;
+            }
+
+            .tweetIcons {
+                margin-top: 8px;
+                width: calc(100% - 400px);
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .tweetContent {
+                margin-top: 5px;
+            }
+
+            pin {
+                margin-left: 50px;
+                color: #666 !important;
+                font-weight: bold;
+                font-size: 0.88em;
+                padding-bottom: 5px;
+                display: block;
+            }
+           
+            .sidebar {
+                padding: 10px;
+            }
+           
+            .sidebar > div {
+                border: 1px solid #eee;
+                border-radius: 10px;
+                padding: 10px 15px;
+            }
+           
+            .newTo span {
+                display: block;
+                font-size: 0.8em;
+                margin: 5px 0;
+                color: #555;
+            }
+           
+            .sidebarHeader {
+                font-weight: bold;
+                font-size: 1.3em !important;
+                color: black !important;
+            }
+           
+            .sidebarButton {
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                user-select: none;
+                cursor: pointer;
+                transition: 0.2s;
+                font-size: 1em !important;
+                color: black !important;
+            }
+           
+            .sidebarButton:hover {
+                background: #eee;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mainContainer">
+            <div></div>
+            <div class="mainContent">
+                <div class="mainTopBar">
+                    <span class="name"></span>
+                    <span class="tweetCount"></span>
+                </div>
+                <div class="mainImg">
+                    <img draggable="false">
+                </div>
+                <div class="mainBio">
+                    <img class="bioImg" draggable="false">
+                    <span class="name"></span>
+                    <span class="tag"></span>
+                    <span class="bio"></span>
+                    <div class="bioIcons">
+                        <span class="icon"><span class="fa fa-location-dot"></span> <span id="location"></span></span>
+                        <span class="icon"><span class="fa fa-calendar-days"></span> Joined <span id="joinedDate"></span></span><br><br>
+                        <span class="icon"><bold id="following"></bold> Following</span>
+                        <span class="icon"><bold id="followers"></bold> Followers</span>
+                    </div>
+                </div>
+                <div class="mainTweets"></div>
+            </div>
+            <div class="sidebar">
+                <div class="newTo">
+                    <span class="sidebarHeader">New to Valley of the Tweets?</span>
+                    <span>Sign up now to get your own personalized tomb!</span>
+                    <span class="sidebarButton">Create account</span>
+                </div>
+            </div>
+        </div>
+        <script>
+            const username = "Asim";
+            const tweetCount = "332";
+            const profileImg = "pfp1.webp";
+            const profileTag = "@Asim1487";
+            const profileBio = "Tomb digger in <alink>#ValleyOfTheKings</alink>. I like art, architecture, and defending tombs. I tweet stuff a lot. Currently following <alink>@Hatshepsut</alink> and <alink>@ThutmoseIII</alink>.";
+            const joinedDate = "1466 BCE";
+            const currentLocation = "Valley of the Kings";
+            const following = "2";
+            const followers = "500";
+            const backgroundImg = "votk.jpg";
+
+            document.getElementById("location").innerHTML = currentLocation;
+            document.getElementById("joinedDate").innerHTML = joinedDate;
+            document.getElementById("following").innerHTML = following;
+            document.getElementById("followers").innerHTML = followers;
+            document.querySelector(".mainBio .bioImg").src = profileImg;
+            document.querySelector(".mainBio .bio").innerHTML = profileBio;
+            document.querySelector(".mainBio .tag").innerHTML = profileTag;
+            document.querySelector(".mainBio .name").innerHTML = username;
+            document.querySelector(".mainTopBar .name").innerHTML = username;
+            document.querySelector(".mainTopBar .tweetCount").innerHTML = tweetCount + " Tweets";
+            document.querySelector(".mainImg img").src = backgroundImg;
+
+            function createTweet(options) {
+                const pinnedHTML = options.pinned ? `<pin><span class="fa fa-thumbtack"></span> Pinned by ${username}</pin>` : "";
+                const retweetedHTML = options.retweeted ? `<pin><span class="fa fa-retweet"></span> ${username} Retweeted</pin>` : "";
+                document.querySelector(".mainTweets").innerHTML += `
+                    <div class="tweet">
+                        ${pinnedHTML}
+                        ${retweetedHTML}
+                        <img class="tweetImg" src="${options.profileImg || profileImg}" draggable="false" ${!options.pinned && !options.retweeted ? "style='top: 10px;'" : ""}>
+                        <div class="tweetTop">
+                            <div class="tweetInfo">
+                                <span class="name"><bold>${options.username || username}</bold></span>&nbsp;&nbsp;
+                                <span class="tag">${options.profileTag || profileTag}</span>&nbsp;&bull;
+                                <span class="date">${options.date}</span>
+                            </div>
+                        </div>
+                        <div class="tweetContent">
+                            ${options.content}
+                        </div>
+                        <div class="tweetIcons">
+                            <span class="icon"><span class="fa fa-comment"></span> ${options.comments}</span>
+                            <span class="icon"><span class="fa fa-retweet"></span> ${options.retweets}</span>
+                            <span class="icon"><span class="fa fa-heart"></span> ${options.likes}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            createTweet({
+                pinned: true,
+                date: "1459 BCE",
+                content: "Pyramid Theories: How do you think the Great Pyramids were built?",
+                likes: "14K",
+                retweets: "567",
+                comments: "2502"
+            });
+
+            // when retweeted is true, you need to provide username, profileTag, and profileImg
+            createTweet({
+                retweeted: true,
+                date: "1459 BCE",
+                username: "Amenmose",
+                profileTag: "@Amenmose5",
+                profileImg: "pfp2.webp",
+                content: "I think that maybe the original pyramid builders used irrigation systems and water to float the bricks upward on rafts. It would require very little raw strength and easily executable with the right planning and coordination. Although it takes a lot of time and effort to set up, it would be easy to build the Pyramid once the setup was complete. <alink>#WaterMakesThingsFloat</alink>",
+                likes: "364",
+                retweets: "44",
+                comments: "35"
+            });
+
+createTweet({
+                retweeted: true,
+                date: "1459 BCE",
+                username: "Amunet",
+                profileTag: "@Amunet32",
+                profileImg: "pfp3.webp",
+                content: "I don't think this theory is correct. Although it does provide an easy system to haul the bricks up, there would have had to be an in place irrigation system which would leave evidence.... yet there is no sign of any exterior canal...",
+                likes: "603",
+                retweets: "31",
+                comments: "24"
+            });
+
+createTweet({
+                retweeted: true,
+                date: "1459 BCE",
+                username: "Nimlot",
+                profileTag: "@Nim1492",
+                profileImg: "pfp4.webp",
+                content: "The pyramids could have been built with ramps instead of water... where bricks were hauled up by sacrificing power for distance. An external ramp could have been used to build the foundation, and an internal ramp that winds up the perimeter of the pyramid could have been used to build the top part. This method would be easy, and although it would require a lot of manual labor it would still be doable with enough participants. <alink>#Ramps</alink>",
+                likes: "992",
+                retweets: "84",
+                comments: "96"
+            });
+
+createTweet({
+                retweeted: true,
+                date: "1459 BCE",
+                username: "Amenmose",
+                profileTag: "@Amenmose5",
+                profileImg: "pfp2.webp",
+                content: "I think the ramp theory makes sense, we just need proof that such a thing exists. Too bad we're not allowed in...",
+                likes: "302",
+                retweets: "24",
+                comments: "33"
+            });
+
+createTweet({
+                retweeted: true,
+                date: "1459 BCE",
+                username: "Anonymous22",
+                profileTag: "@a_22c",
+                profileImg: "pfp5.webp",
+                content: "You're all wrong, it's obviously aliens. Humans can't have possibly had the strength to make the pyramids. <alink>#Aliens</alink>",
+                likes: "1968",
+                retweets: "1968",
+                comments: "2.6M"
+            });
+
+createTweet({
+                pinned: false,
+                date: "1458 BCE",
+                content: "Today pharaoh <alink>@Hatshepsut</alink> died. Rest in peace to one of the first sole female ruler of Egypt. Her internal organs were removed and placed in Canopic Jars, and mummification has begun. The body has been covered in natron and will take about 70 days. Consistent updates will be posted. <alink>#RestInPeace</alink>",
+                likes: "259K",
+                retweets: "1458",
+                comments: "1507"
+            });
+
+createTweet({
+                pinned: false,
+                date: "1458 BCE",
+                content: "<alink>@Hatshepsut</alink>'s mummification is now complete. The Opening of the Mouth Ceremony will take place tomorrow in the <alink>#ValleyOfTheKings</alink> near her tomb entrance. Other artifacts for taking into the afterlife have been prepared as well.",
+                likes: "88.5K",
+                retweets: "772",
+                comments: "604"
+            });
+
+createTweet({
+                retweeted: true,
+                date: "1458 BCE",
+                username: "Ameny",
+                profileTag: "@Am_4",
+                profileImg: "pfp6.webp",
+                content: "The tomb has now been sealed. Thanks to all who attended the ceremony.",
+                likes: "14.5K",
+                retweets: "1002",
+                comments: "858"
+            });
+
+createTweet({
+                pinned: false,
+                date: "1454 BCE",
+                content: "The first ever Graverobber Defense is out! Check out this extremely realistic tower defense game that allows you do defend your own tomb! Arm your dead pharaoh's sarcophagus with different types of traps and obstacles from Necropolis Guards to Curses to Toxic Powders!! You can defeat Grave Robbers and gain resources to upgrade your defenses!!! You can purchase the full game for 1 shat or receive a one-week trial for FREE by clicking this link <alink>https://ry51.github.io/graverobberdefense/</alink>!!!! <alink>#GraverobberDefense</alink> <alink>#ValleyOfTheKings</alink>",
+likes: "33.1K",
+                retweets: "1157",
+                comments: "2042"
+            });
+
+createTweet({
+                pinned: false,
+                date: "1453 BCE",
+                content: "The second version of Graverobber Defense is out! This version features tomb evolution - going through the five stages of Egyptian tomb building!! You can now upgrade your tomb from Pits in the Sand to Mastabas to Step Pyramids to True Pyramids to Valley of the Kings!!! You can now also simulate a Necropolis Guard yourself by shooting Graverobbers!!!! Link is still <alink>https://ry51.github.io/graverobberdefense/</alink>!!!!! <alink>#GraverobberDefense</alink> <alink>#ValleyOfTheKings</alink>",
+likes: "22.5K",
+                retweets: "982",
+                comments: "1693"
+            });
+
+            createTweet({
+                pinned: false,
+                date: "1451 BCE",
+                content: "Went to the Temple today. We exercised the 'Daily Ritual' and were even brought to the god or goddess to ask questions: their answer would be based off the movement of their barque.",
+likes: "16.3K",
+                retweets: "902",
+                comments: "1092"
+            });
+
+        </script>
+    </body>
+</html>

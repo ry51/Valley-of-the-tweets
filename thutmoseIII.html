@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Valley of the Tweets</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .mainContent {
+                width: 40%;
+                min-width: 650px;
+            }
+
+            .mainContainer {
+                display: flex;
+                justify-content: center;
+            }
+           
+            .mainContainer > div {
+                width: 100%;
+            }
+
+            .mainTopBar {
+                padding: 5px 20px;
+                border: 1px solid #eee;
+            }
+
+            .mainTopBar .name {
+                font-size: 1.3em;
+                font-weight: bold;
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .mainTopBar .tweetCount {
+                font-size: 0.85em;
+                color: #999;
+            }
+
+            .mainImg img {
+                width: 100%;
+            }
+
+            .mainImg {
+                max-height: 250px;
+                overflow: hidden;
+            }
+
+            .mainBio {
+                position: relative;
+                border: 1px solid #eee;
+            }
+
+            .mainBio .bioImg {
+                width: 133px;
+                height: 133px;
+                border-radius: 50%;
+                border: 5px solid white;
+                position: relative;
+                top: -66px;
+                left: 20px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            .mainBio .bioImg:hover {
+                filter: brightness(0.9);
+            }
+
+            .mainBio .name {
+                display: block;
+                font-size: 1.3em;
+                font-weight: bold;
+                margin: -50px 0 5px 20px;
+            }
+
+            .mainBio .tag {
+                display: block;
+                font-size: 0.9em;
+                color: #888;
+                margin: 0 0 10px 20px;
+            }
+
+            .mainBio .bio {
+                display: block;
+                margin: 0 0 10px 20px;
+            }
+
+            .bioIcons {
+                padding: 0 0 10px 20px;
+                color: #777;
+            }
+
+            .bioIcons .icon {
+                padding-right: 10px;
+            }
+
+            alink {
+                color: rgb(29, 155, 240);
+                cursor: pointer;
+            }
+
+            alink:hover {
+                text-decoration: underline;
+            }
+
+            bold {
+                font-weight: bold;
+                color: black;
+            }
+
+            .tweet {
+                padding: 9px 20px 20px 20px;
+                position: relative;
+                border: 1px solid #eee;
+                border-top: none;
+                cursor: pointer;
+            }
+
+            .tweetImg {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                position: absolute;
+                top: 30px;
+                left: 15px;
+            }
+
+            .tweetInfo {
+                color: #777;
+            }
+
+            .tweetIcons, .tweetContent, .tweetTop {
+                margin-left: 68px;
+            }
+
+            .tweetIcons {
+                margin-top: 8px;
+                width: calc(100% - 400px);
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .tweetContent {
+                margin-top: 5px;
+            }
+
+            pin {
+                margin-left: 50px;
+                color: #666 !important;
+                font-weight: bold;
+                font-size: 0.88em;
+                padding-bottom: 5px;
+                display: block;
+            }
+           
+            .sidebar {
+                padding: 10px;
+            }
+           
+            .sidebar > div {
+                border: 1px solid #eee;
+                border-radius: 10px;
+                padding: 10px 15px;
+            }
+           
+            .newTo span {
+                display: block;
+                font-size: 0.8em;
+                margin: 5px 0;
+                color: #555;
+            }
+           
+            .sidebarHeader {
+                font-weight: bold;
+                font-size: 1.3em !important;
+                color: black !important;
+            }
+           
+            .sidebarButton {
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                user-select: none;
+                cursor: pointer;
+                transition: 0.2s;
+                font-size: 1em !important;
+                color: black !important;
+            }
+           
+            .sidebarButton:hover {
+                background: #eee;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mainContainer">
+            <div></div>
+            <div class="mainContent">
+                <div class="mainTopBar">
+                    <span class="name"></span>
+                    <span class="tweetCount"></span>
+                </div>
+                <div class="mainImg">
+                    <img draggable="false">
+                </div>
+                <div class="mainBio">
+                    <img class="bioImg" draggable="false">
+                    <span class="name"></span>
+                    <span class="tag"></span>
+                    <span class="bio"></span>
+                    <div class="bioIcons">
+                        <span class="icon"><span class="fa fa-location-dot"></span> <span id="location"></span></span>
+                        <span class="icon"><span class="fa fa-calendar-days"></span> Joined <span id="joinedDate"></span></span><br><br>
+                        <span class="icon"><bold id="following"></bold> Following</span>
+                        <span class="icon"><bold id="followers"></bold> Followers</span>
+                    </div>
+                </div>
+                <div class="mainTweets"></div>
+            </div>
+            <div class="sidebar">
+                <div class="newTo">
+                    <span class="sidebarHeader">New to Valley of the Tweets?</span>
+                    <span>Sign up now to get your own personalized tomb!</span>
+                    <span class="sidebarButton">Create account</span>
+                </div>
+            </div>
+        </div>
+        <script>
+            const username = "Thutmose III";
+            const tweetCount = "77";
+            const profileImg = "thutmose3.jpg";
+            const profileTag = "@ThutmoseIII";
+            const profileBio = "Pharaoh of Egypt and military leader. Follow me for news about the expansion of the Egyptian Empire!";
+            const joinedDate = "1463 BCE";
+            const currentLocation = "KV34";
+            const following = "6";
+            const followers = "8.8M";
+            const backgroundImg = "kv34.jpg";
+
+            document.getElementById("location").innerHTML = currentLocation;
+            document.getElementById("joinedDate").innerHTML = joinedDate;
+            document.getElementById("following").innerHTML = following;
+            document.getElementById("followers").innerHTML = followers;
+            document.querySelector(".mainBio .bioImg").src = profileImg;
+            document.querySelector(".mainBio .bio").innerHTML = profileBio;
+            document.querySelector(".mainBio .tag").innerHTML = profileTag;
+            document.querySelector(".mainBio .name").innerHTML = username;
+            document.querySelector(".mainTopBar .name").innerHTML = username;
+            document.querySelector(".mainTopBar .tweetCount").innerHTML = tweetCount + " Tweets";
+            document.querySelector(".mainImg img").src = backgroundImg;
+
+            function createTweet(options) {
+                const pinnedHTML = options.pinned ? `<pin><span class="fa fa-thumbtack"></span> Pinned by ${username}</pin>` : "";
+                const retweetedHTML = options.retweeted ? `<pin><span class="fa fa-retweet"></span> ${username} Retweeted</pin>` : "";
+                document.querySelector(".mainTweets").innerHTML += `
+                    <div class="tweet">
+                        ${pinnedHTML}
+                        ${retweetedHTML}
+                        <img class="tweetImg" src="${options.profileImg || profileImg}" draggable="false" ${!options.pinned && !options.retweeted ? "style='top: 10px;'" : ""}>
+                        <div class="tweetTop">
+                            <div class="tweetInfo">
+                                <span class="name"><bold>${options.username || username}</bold></span>&nbsp;&nbsp;
+                                <span class="tag">${options.profileTag || profileTag}</span>&nbsp;&bull;
+                                <span class="date">${options.date}</span>
+                            </div>
+                        </div>
+                        <div class="tweetContent">
+                            ${options.content}
+                        </div>
+                        <div class="tweetIcons">
+                            <span class="icon"><span class="fa fa-comment"></span> ${options.comments}</span>
+                            <span class="icon"><span class="fa fa-retweet"></span> ${options.retweets}</span>
+                            <span class="icon"><span class="fa fa-heart"></span> ${options.likes}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        </script>
+    </body>
+</html>
